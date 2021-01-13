@@ -1,0 +1,33 @@
+version: '3.8'
+networks: 
+  backend:
+    name: backend
+volumes:
+  app-data:
+services:
+  apache:
+    container_name: laravel.apache
+    build:
+      context: ../../docker/apache
+    image: laravel.apache
+    ports:
+      - 8080:80
+    volumes:
+      - ../../src:/var/www/html
+    networks:
+      - backend
+  mysql:
+    container_name: laravel.mysql
+    image: mysql:5.7
+    environment: 
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_USER: default
+      MYSQL_PASSWORD: secret
+      MYSQL_DATABASE: default
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 3307:3306
+    networks:
+      - backend
